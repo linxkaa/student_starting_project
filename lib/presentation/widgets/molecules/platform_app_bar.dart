@@ -10,6 +10,8 @@ class PlatformAppBar extends PlatformWidget<CupertinoNavigationBar, AppBar> impl
   final PreferredSizeWidget? bottom;
   final double? elevation;
   final Color? color;
+  final bool needBackButton;
+  final double? appBarSize;
   const PlatformAppBar({
     super.key,
     required this.title,
@@ -17,10 +19,12 @@ class PlatformAppBar extends PlatformWidget<CupertinoNavigationBar, AppBar> impl
     this.bottom,
     this.elevation,
     this.color,
+    this.needBackButton = true,
+    this.appBarSize,
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(UIHelper.setSp(70));
+  Size get preferredSize => Size.fromHeight(appBarSize ?? UIHelper.setSp(70));
 
   @override
   CupertinoNavigationBar createIosWidget(BuildContext context) => CupertinoNavigationBar(
@@ -31,11 +35,14 @@ class PlatformAppBar extends PlatformWidget<CupertinoNavigationBar, AppBar> impl
   @override
   AppBar createAndroidWidget(BuildContext context) => AppBar(
         title: title,
-        leading: leading ??
-            IconButton(
-              onPressed: () => AutoRouter.of(context).pop(),
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            ),
+        leadingWidth: !needBackButton ? 0 : null,
+        leading: !needBackButton
+            ? null
+            : leading ??
+                IconButton(
+                  onPressed: () => AutoRouter.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                ),
         bottom: bottom,
         elevation: elevation ?? 0,
         backgroundColor: color,
